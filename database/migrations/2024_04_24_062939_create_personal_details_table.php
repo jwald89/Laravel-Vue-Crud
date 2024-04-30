@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('personal_details', function (Blueprint $table) {
             $table->id();
+            $table->string('profile_img');
             $table->string('first_name');
             $table->string('middle_name');
             $table->string('last_name');
-            $table->string('birthdate');
+            $table->date('birthdate');
             $table->string('address');
             $table->string('gender');
             $table->string('contact_no');

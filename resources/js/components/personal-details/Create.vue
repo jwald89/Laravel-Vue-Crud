@@ -1,14 +1,16 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import Dashboard from "../../Dashboard.vue";
+import defaultImg from "../../../../public/image/profile_pic.png";
 
 const router = useRouter();
 
 const formData = ref({
+    profile_img: "",
     fname: "",
     mname: "",
     lname: "",
@@ -18,10 +20,30 @@ const formData = ref({
     contact: "",
 });
 
+const fileInput = ref(null);
+const imageUrl = ref(defaultImg);
+const triggerFileInput = () => {
+    fileInput.value.click();
+};
+
+const handleFileUpload = () => {
+    // Handle file upload logic here
+    console.log("File uploaded");
+
+    const file = fileInput.value.files[0];
+    imageUrl.value = URL.createObjectURL(file);
+    formData.value.profile_img = file;
+};
+
 const isActive = ref(true);
 const hasError = ref(false);
 
 const submitPersonalDetails = async () => {
+    if (!formData.value.profile_img) {
+        formData.value.profile_img = defaultImg;
+
+        console.log(formData.value.profile_img);
+    }
     if (
         !formData.value.fname ||
         !formData.value.lname ||
@@ -46,13 +68,33 @@ const submitPersonalDetails = async () => {
         formData.value.contact = "";
     };
 
+    // try {
+    //     const response = await axios.post(
+    //         "/api/create-personal-details",
+    //         formData.value
+    //     );
+    //     toast.success("Successfully Created", {
+    //         autoClose: 3000,
+    //     });
+
+    //     hasError.value = false;
+    //     clearFormData();
+    // } catch (error) {
+    //     console.error("Error submitting form:", error);
+    // }
+
     try {
+        const formDataToSend = new FormData(); // Create FormData object
+        Object.entries(formData.value).forEach(([key, value]) => {
+            formDataToSend.append(key, value); // Append each form field to FormData
+        });
+
         const response = await axios.post(
             "/api/create-personal-details",
-            formData.value
+            formDataToSend, // Pass FormData as data payload
+            { headers: { "Content-Type": "multipart/form-data" } } // Ensure correct content type
         );
-        // alert(response.data.message);
-        // await router.push({name: 'personal.detail.lists'})
+
         toast.success("Successfully Created", {
             autoClose: 3000,
         });
@@ -62,6 +104,13 @@ const submitPersonalDetails = async () => {
     } catch (error) {
         console.error("Error submitting form:", error);
     }
+
+    return {
+        fileInput,
+        imageUrl,
+        triggerFileInput,
+        handleFileUpload,
+    };
 };
 </script>
 
@@ -73,6 +122,33 @@ const submitPersonalDetails = async () => {
                 PERSONAL DETAILS
             </div>
             <div class="card-body">
+                <div
+                    class="image mb-2 col-lg-2"
+                    id="imageUpload"
+                    @click="triggerFileInput"
+                >
+                    <label for="uploadInput">
+                        <img
+                            :src="imageUrl"
+                            class="img-fluid img-thumbnail"
+                            width="200px"
+                            height="100px"
+                            alt="..."
+                        />
+                        <br />
+                        <label class="ms-5">Upload Image</label>
+                    </label>
+                    <input
+                        type="file"
+                        id="uploadInput"
+                        class="d-none"
+                        name="profile_img"
+                        multiple
+                        ref="fileInput"
+                        @change="handleFileUpload"
+                    />
+                </div>
+
                 <div class="form-group mb-2">
                     <label for="">First Name</label>
                     <input

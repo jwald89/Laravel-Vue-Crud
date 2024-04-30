@@ -26,14 +26,6 @@ const fetchPersonalDetails = async (id) => {
         const response = await axios.get(`/api/edit-personal-details/${id}`);
         const personalDetails = response.data;
 
-        // formData.value.fname = personalDetails.first_name;
-        // formData.value.mname = personalDetails.middle_name;
-        // formData.value.lname = personalDetails.last_name;
-        // formData.value.birthdate = personalDetails.birthdate;
-        // formData.value.address = personalDetails.address;
-        // formData.value.gender = personalDetails.gender;
-        // formData.value.contact = personalDetails.contact_no;
-
         // Update formData with fetched data
         Object.assign(formData.value, personalDetails);
     } catch (error) {

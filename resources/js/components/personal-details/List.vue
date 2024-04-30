@@ -6,6 +6,20 @@ import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import Dashboard from "../../Dashboard.vue";
 
+const modal = ref(null);
+const modalImg = ref(null);
+const captionText = ref(null);
+
+const onClick = function (imageUrl, altText) {
+    modal.value.style.display = "block";
+    modalImg.value.src = `/image/${imageUrl}`;
+    captionText.value.innerHTML = altText;
+};
+
+const closeModal = function () {
+    modal.value.style.display = "none";
+};
+
 const router = useRouter();
 const route = useRoute();
 
@@ -20,7 +34,7 @@ const fetchDetails = async (url) => {
             meta.value.current_page = response.data.current_page;
             meta.value.links = response.data.links;
             meta.value.per_page = response.data.per_page;
-            console.log(response.data);
+
             if (!response.data.from && response.data.total !== 0) {
                 fetchDetails(
                     `/api/personal-details?page=${meta.value.current_page - 1}`
@@ -73,6 +87,13 @@ const deleteDetail = async (id) => {
                         >Create New</router-link
                     >
                 </div>
+
+                <div id="myModal" class="modal" ref="modal">
+                    <span class="close" @click="closeModal">&times;</span>
+                    <img class="modal-content" id="img01" ref="modalImg" />
+                    <div id="caption" ref="captionText"></div>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table">
                         <thead class="text-center">
@@ -85,6 +106,7 @@ const deleteDetail = async (id) => {
                                 <th>Address</th>
                                 <th>Gender</th>
                                 <th>Contact</th>
+                                <th>Image</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -116,6 +138,20 @@ const deleteDetail = async (id) => {
                                     <td>{{ detail.address }}</td>
                                     <td>{{ detail.gender }}</td>
                                     <td>{{ detail.contact_no }}</td>
+                                    <td v-if="detail.profile_img">
+                                        <img
+                                            :src="`/image/${detail.profile_img}`"
+                                            width="50px"
+                                            height="50px"
+                                            @click="
+                                                () =>
+                                                    onclick(
+                                                        detail.profile_img,
+                                                        detail.alt
+                                                    )
+                                            "
+                                        />
+                                    </td>
                                     <td>
                                         <router-link
                                             class="btn btn-info btn-sm me-1"
@@ -162,3 +198,106 @@ const deleteDetail = async (id) => {
         </div>
     </div>
 </template>
+
+<style scoped>
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#myImg {
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#myImg:hover {
+    opacity: 0.7;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (image) */
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+}
+
+/* Caption of Modal Image */
+#caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+    height: 150px;
+}
+
+/* Add Animation */
+.modal-content,
+#caption {
+    -webkit-animation-name: zoom;
+    -webkit-animation-duration: 0.6s;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+    from {
+        -webkit-transform: scale(0);
+    }
+    to {
+        -webkit-transform: scale(1);
+    }
+}
+
+@keyframes zoom {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+/* The Close Button */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px) {
+    .modal-content {
+        width: 100%;
+    }
+}
+</style>

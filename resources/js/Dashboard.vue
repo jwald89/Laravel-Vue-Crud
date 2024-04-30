@@ -1,13 +1,8 @@
-<script setup>
-import Content from "./components/personal-details/Content.vue";
-</script>
-
 <template>
     <div class="container p-2">
         <h1 class="text-primary">DASHBOARD</h1>
         <div class="card p-2">
             <nav class="navbar navbar-expand-sm bg-light">
-                <!-- Links -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <router-link class="nav-link" :to="'/'">
@@ -30,6 +25,5 @@ import Content from "./components/personal-details/Content.vue";
                 </ul>
             </nav>
         </div>
-        <Content />
     </div>
 </template>

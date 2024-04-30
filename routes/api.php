@@ -10,7 +10,16 @@ Route::get('/user', function (Request $request) {
 
 // STORE DATA TO THE DATABASE
 Route::post('/create-personal-details', function(Request $request) {
+
+    if ($request->hasFile('profile_img')) {
+        $imageName = time().'.'.$request->file('profile_img')->getClientOriginalName();
+        $request->file('profile_img')->move(public_path('image'), $imageName);
+    } else {
+        $imageName = null;
+    }
+
     $personalDetail = new PersonalDetails();
+    $personalDetail->profile_img = $imageName;
     $personalDetail->first_name = $request['fname'];
     $personalDetail->middle_name = $request['mname'];
     $personalDetail->last_name = $request['lname'];
@@ -22,13 +31,13 @@ Route::post('/create-personal-details', function(Request $request) {
 
     return response()->json([
         'message' => 'Personal details submitted successfully.',
-        'data' => $personalDetail
+        'data' => $personalDetail,
     ], 200);
 });
 
 
 // FETCH DATA FROM THE DATABASE THEN IT SHOW TO THE DATATABLE
-Route::get('/personal-details', function($entries = 5) {
+Route::get('/personal-details', function($entries = 10) {
     $personalDetails = PersonalDetails::orderByDesc('created_at')->paginate($entries);
 
     return $personalDetails;
