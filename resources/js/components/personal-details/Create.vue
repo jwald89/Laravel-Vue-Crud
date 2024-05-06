@@ -84,20 +84,21 @@ const submitPersonalDetails = async () => {
     // }
 
     try {
-        const formDataToSend = new FormData(); // Create FormData object
+        const formDataToSend = new FormData();
         Object.entries(formData.value).forEach(([key, value]) => {
-            formDataToSend.append(key, value); // Append each form field to FormData
+            formDataToSend.append(key, value);
         });
 
         const response = await axios.post(
             "/api/create-personal-details",
-            formDataToSend, // Pass FormData as data payload
-            { headers: { "Content-Type": "multipart/form-data" } } // Ensure correct content type
+            formDataToSend,
+            { headers: { "Content-Type": "multipart/form-data" } }
         );
 
         toast.success("Successfully Created", {
             autoClose: 3000,
         });
+        router.push("/personal-details");
 
         hasError.value = false;
         clearFormData();

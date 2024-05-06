@@ -49,7 +49,6 @@ const onUpdateDetail = async () => {
         toast.success("Successfully updated.", {
             autoClose: 1000,
         });
-        // router.push(`/personal-details?page=${editRecordPageBelong.value}`);
     } catch (error) {
         console.error("Error updating personal details:", error);
     }

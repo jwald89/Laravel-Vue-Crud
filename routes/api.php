@@ -35,6 +35,21 @@ Route::post('/create-personal-details', function(Request $request) {
     ], 200);
 });
 
+// SEARCH DATA FROM THE DATABASE
+Route::get('/search-data', function(){
+    return PersonalDetails::when(request()->filled('search'), function($query) {
+        $query->whereAny([
+            'first_name',
+            'middle_name',
+            'last_name',
+            'birthdate',
+            'address',
+            'gender',
+            'contact_no'
+        ],
+        'like', '%' . request()->search . '%');
+    })->orderBy('created_at', 'DESC')->paginate(10);
+});
 
 // FETCH DATA FROM THE DATABASE THEN IT SHOW TO THE DATATABLE
 Route::get('/personal-details', function($entries = 10) {
@@ -42,7 +57,6 @@ Route::get('/personal-details', function($entries = 10) {
 
     return $personalDetails;
 });
-
 
 // FETCH DATA TO DISPLAY TO EDIT FORM INPUT FIELDS
 Route::get('/edit-personal-details/{id}', function($id) {

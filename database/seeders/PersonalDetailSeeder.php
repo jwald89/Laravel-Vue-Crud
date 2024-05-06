@@ -16,16 +16,16 @@ class PersonalDetailSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        $chunkSize = 1000; // Adjust the chunk size as needed
+        $chunkSize = 500; // Adjust the chunk size as needed
 
-        $totalRecords = 50000;
+        $totalRecords = 300000;
         $totalChunks = ceil($totalRecords / $chunkSize);
 
         for ($i = 0; $i < $totalChunks; $i++) {
             $data = [];
             for ($j = 0; $j < $chunkSize; $j++) {
                 $data[] = [
-                    'profile_img' => $faker->imageUrl(),
+                    'profile_img' => 'https://source.unsplash.com/random/200x200',
                     'first_name' => $faker->firstName,
                     'middle_name' => $faker->firstName,
                     'last_name' => $faker->lastName,

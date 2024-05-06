@@ -5,6 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import Dashboard from "../../Dashboard.vue";
+import Search from "@/components/personal-details/Search.vue";
 
 const modal = ref(null);
 const modalImg = ref(null);
@@ -24,6 +25,7 @@ const router = useRouter();
 const route = useRoute();
 
 let personalDetails = ref([]);
+
 let meta = ref({ current_page: 1, links: [] });
 
 const fetchDetails = async (url) => {
@@ -73,6 +75,19 @@ const deleteDetail = async (id) => {
         console.error("Error deleting personal detail:", error);
     }
 };
+
+const onSearchFinished = (data) => {
+    personalDetails.value = data.data;
+    meta.value.current_page = data.current_page;
+    meta.value.links = data.links;
+    meta.value.per_page = data.per_page;
+
+    if (!data.from && data.total !== 0) {
+        fetchDetails(
+            `/api/personal-details?page=${meta.value.current_page - 1}`
+        );
+    }
+};
 </script>
 
 <template>
@@ -80,14 +95,18 @@ const deleteDetail = async (id) => {
     <div class="container p-2">
         <div class="card mt-4">
             <div class="card-body p-4">
-                <div class="mb-3">
-                    <router-link
-                        class="btn btn-primary btn-md"
-                        :to="'/create-personal-details'"
-                        >Create New</router-link
-                    >
+                <div class="d-flex justify-content-between col-lg-12 mb-4">
+                    <div class="col-lg-6">
+                        <Search @results="onSearchFinished" />
+                    </div>
+                    <div class="col-lg-6">
+                        <router-link
+                            class="btn btn-primary btn-md float-end"
+                            :to="'/create-personal-details'"
+                            >Create New</router-link
+                        >
+                    </div>
                 </div>
-
                 <div id="myModal" class="modal" ref="modal">
                     <span class="close" @click="closeModal">&times;</span>
                     <img class="modal-content" id="img01" ref="modalImg" />
@@ -118,6 +137,7 @@ const deleteDetail = async (id) => {
                                     </td>
                                 </tr>
                             </template>
+
                             <template v-else>
                                 <tr
                                     v-for="(detail, index) in personalDetails"
@@ -140,7 +160,7 @@ const deleteDetail = async (id) => {
                                     <td>{{ detail.contact_no }}</td>
                                     <td v-if="detail.profile_img">
                                         <img
-                                            :src="`/image/${detail.profile_img}`"
+                                            :src="detail.profile_img"
                                             width="50px"
                                             height="50px"
                                             @click="
@@ -214,19 +234,18 @@ body {
     opacity: 0.7;
 }
 
-/* The Modal (background) */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0); /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.9); /* Black w/ opacity */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.9);
 }
 
 /* Modal Content (image) */
