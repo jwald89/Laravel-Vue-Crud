@@ -5,7 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import Dashboard from "../../Dashboard.vue";
-import Search from "@/components/personal-details/Search.vue";
+import Search from "@/components/buttons/Search.vue";
 
 const modal = ref(null);
 const modalImg = ref(null);
@@ -130,10 +130,14 @@ const onSearchFinished = (data) => {
                             </tr>
                         </thead>
                         <tbody>
-                            <template v-if="personalDetails.length === 0">
+                            <template v-if="personalDetails.length <= 0">
                                 <tr>
                                     <td colspan="9" class="text-center">
-                                        No Data
+                                        <h2>No match found..</h2>
+                                        <span class="text-primary"
+                                            >( Kindly double check the spelling
+                                            that you've search )</span
+                                        >
                                     </td>
                                 </tr>
                             </template>
@@ -160,7 +164,7 @@ const onSearchFinished = (data) => {
                                     <td>{{ detail.contact_no }}</td>
                                     <td v-if="detail.profile_img">
                                         <img
-                                            :src="detail.profile_img"
+                                            :src="`/image/${detail.profile_img}`"
                                             width="50px"
                                             height="50px"
                                             @click="
