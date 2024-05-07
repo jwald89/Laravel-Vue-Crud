@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
@@ -10,6 +10,7 @@ const router = useRouter();
 const route = useRoute();
 const formData = ref({
     id: null,
+    profile_img: "",
     first_name: "",
     middle_name: "",
     last_name: "",
@@ -17,6 +18,12 @@ const formData = ref({
     address: "",
     gender: "",
     contact_no: "",
+});
+
+const imgResult = computed(() => {
+    return formData.value.profile_img
+        ? `/image/${formData.value.profile_img}`
+        : null;
 });
 
 const editRecordPageBelong = ref(route.params?.page || "");
@@ -59,11 +66,18 @@ const onUpdateDetail = async () => {
     <Dashboard />
     <div class="container mt-4">
         <div class="card">
-            <!-- <form @submit.prevent="onUpdateDetail"> -->
             <div class="card-header bg-secondary text-white">
                 PERSONAL DETAILS
             </div>
             <div class="card-body p-4">
+                <div class="form-group mb-2">
+                    <img
+                        :src="imgResult"
+                        class="img-fluid img-thumbnail"
+                        width="200px"
+                        height="200px"
+                    />
+                </div>
                 <div class="form-group mb-2">
                     <label for="">First Name</label>
                     <input

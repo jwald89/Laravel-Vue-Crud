@@ -47,7 +47,10 @@ Route::get('/search-data', function(){
             'gender',
             'contact_no'
         ],
-        'like', '%' . request()->search . '%');
+        'like', '%' . request()->search . '%')
+        ->orWhereRaw("CONCAT(first_name, ' ', middle_name) like ?", ['%' . request()->search . '%'])
+        ->orWhereRaw("CONCAT(first_name, ' ', last_name) like ?", ['%' . request()->search . '%'])
+        ->orWhereRaw("CONCAT(first_name, ' ', middle_name, ' ', last_name) like ?", ['%' . request()->search . '%']);
     })->orderBy('created_at', 'DESC')->paginate(10);
 });
 
@@ -60,6 +63,7 @@ Route::get('/personal-details', function($entries = 10) {
 
 // FETCH DATA TO DISPLAY TO EDIT FORM INPUT FIELDS
 Route::get('/edit-personal-details/{id}', function($id) {
+
     $data = PersonalDetails::find($id);
 
     return response()->json($data, 200);

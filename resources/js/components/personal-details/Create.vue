@@ -68,21 +68,6 @@ const submitPersonalDetails = async () => {
         formData.value.contact = "";
     };
 
-    // try {
-    //     const response = await axios.post(
-    //         "/api/create-personal-details",
-    //         formData.value
-    //     );
-    //     toast.success("Successfully Created", {
-    //         autoClose: 3000,
-    //     });
-
-    //     hasError.value = false;
-    //     clearFormData();
-    // } catch (error) {
-    //     console.error("Error submitting form:", error);
-    // }
-
     try {
         const formDataToSend = new FormData();
         Object.entries(formData.value).forEach(([key, value]) => {
